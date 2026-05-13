@@ -7,7 +7,7 @@ import {
 
 const router = Router();
 router.get("/hello", helloUser);
-router.get("/profile/:name", getUserById);
+router.get("/:name", getUserById);
 router.post("/login", loginUser);
 
 export default router;
