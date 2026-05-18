@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import prisma from "../lib/prisma";
 
-export const createProduct = async (req: Request, res: Response) => {
+export const createProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { name, price, description, stock, category, userId } = req.body;
     const newProduct = await prisma.product.create({
@@ -19,15 +19,13 @@ export const createProduct = async (req: Request, res: Response) => {
       message: "Product created successfully",
       data: newProduct,
     });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Failed to create product",
-      error: error,
-    });
+  } catch (error: any) {
+    error.message = "Failed to create product";
+    next(error);
   }
 };
 
-export const getAllProducts = async (req: Request, res: Response) => {
+export const getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { search, minPrice, sortBy } = req.query;
 
@@ -74,15 +72,13 @@ export const getAllProducts = async (req: Request, res: Response) => {
       },
       data: products,
     });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Failed to retrieve products",
-      error: error,
-    });
+  } catch (error: any) {
+    error.message = "Failed to retrieve products";
+    next(error);
   }
 };
 
-export const getProductById = async (req: Request, res: Response) => {
+export const getProductById = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const product = await prisma.product.findUnique({
@@ -101,15 +97,13 @@ export const getProductById = async (req: Request, res: Response) => {
       message: "Product Found!",
       data: product,
     });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Failed to find product",
-      error: error,
-    });
+  } catch (error: any) {
+    error.message = "Failed to find product";
+    next(error);
   }
 };
 
-export const updateProduct = async (req: Request, res: Response) => {
+export const updateProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const { name, price, description, stock, category } = req.body;
@@ -130,15 +124,13 @@ export const updateProduct = async (req: Request, res: Response) => {
       message: "Product updated successfully",
       data: updatedProduct,
     });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Failed to update product",
-      error: error,
-    });
+  } catch (error: any) {
+    error.message = "Failed to update product";
+    next(error);
   }
 };
 
-export const deleteProduct = async (req: Request, res: Response) => {
+export const deleteProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     await prisma.product.delete({
@@ -150,10 +142,8 @@ export const deleteProduct = async (req: Request, res: Response) => {
     return res.status(200).json({
       message: "Product deleted successfully",
     });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Failed to delete product",
-      error: error,
-    });
+  } catch (error: any) {
+    error.message = "Failed to delete product";
+    next(error);
   }
 };
